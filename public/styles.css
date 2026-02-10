@@ -907,3 +907,32 @@ body {
         gap: 4px;
     }
 }
+
+/* Sidebar Navigation Links */
+.sidebar-nav a {
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.sidebar-nav a.nav-btn {
+    width: 48px;
+    height: 48px;
+    background: transparent;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+}
+
+.sidebar-nav a.nav-btn:hover {
+    background: var(--bg-tertiary);
+    color: var(--text-primary);
+}
+
+.sidebar-nav a.nav-btn.active {
+    background: var(--accent-red);
+    color: var(--text-primary);
+    box-shadow: 0 0 15px var(--accent-red-glow);
+}
+

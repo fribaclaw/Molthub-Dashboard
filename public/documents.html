@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Documents - Molthub Dashboard v2</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="documents.css">
+</head>
+<body>
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+        <div class="sidebar-logo">
+            <div class="logo-icon">M</div>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="index.html" class="nav-btn" title="Recruit Agent">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                    <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                </svg>
+            </a>
+            <a href="documents.html" class="nav-btn active" title="Documents">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                    <line x1="16" y1="17" x2="8" y2="17"></line>
+                    <polyline points="10 9 9 9 8 9"></polyline>
+                </svg>
+            </a>
+            <a href="settings.html" class="nav-btn" title="Settings">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="3"></circle>
+                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                </svg>
+            </a>
+        </nav>
+        <div class="sidebar-footer">
+            <div class="status-indicator" title="Gateway Status">
+                <div class="status-dot online"></div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+        <section id="documents-section" class="content-section active">
+            <header class="section-header">
+                <h1 class="section-title">
+                    <span class="highlight-text">Documents</span>
+                </h1>
+                <p class="section-subtitle">Manage your agent documents and files</p>
+            </header>
+
+            <div class="documents-layout">
+                <!-- Document Sidebar -->
+                <div class="document-sidebar">
+                    <button class="new-doc-btn">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="12" y1="5" x2="12" y2="19"></line>
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                        </svg>
+                        New Document
+                    </button>
+                    
+                    <div class="doc-folders">
+                        <div class="folder active">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+                            </svg>
+                            All Documents
+                            <span class="count">12</span>
+                        </div>
+                        <div class="folder">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+                            </svg>
+                            Code Snippets
+                            <span class="count">5</span>
+                        </div>
+                        <div class="folder">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+                            </svg>
+                            Creative Writing
+                            <span class="count">3</span>
+                        </div>
+                        <div class="folder">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+                            </svg>
+                            Translations
+                            <span class="count">4</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Document List -->
+                <div class="document-grid">
+                    <div class="doc-grid-header">
+                        <span>Name</span>
+                        <span>Agent</span>
+                        <span>Date</span>
+                        <span>Status</span>
+                    </div>
+                    
+                    <div class="doc-card">
+                        <div class="doc-icon">📄</div>
+                        <div class="doc-info">
+                            <h4>API Integration Guide</h4>
+                            <p>Modified 2 hours ago</p>
+                        </div>
+                        <div class="doc-agent">
+                            <span class="agent-tag codex">Codex</span>
+                        </div>
+                        <div class="doc-date">Feb 10, 2025</div>
+                        <div class="doc-status completed">Completed</div>
+                    </div>
+                    
+                    <div class="doc-card">
+                        <div class="doc-icon">📝</div>
+                        <div class="doc-info">
+                            <h4>Story Draft - Chapter 1</h4>
+                            <p>Modified yesterday</p>
+                        </div>
+                        <div class="doc-agent">
+                            <span class="agent-tag claude">Claude</span>
+                        </div>
+                        <div class="doc-date">Feb 9, 2025</div>
+                        <div class="doc-status in-progress">In Progress</div>
+                    </div>
+                    
+                    <div class="doc-card">
+                        <div class="doc-icon">🌐</div>
+                        <div class="doc-info">
+                            <h4>Spanish Translation</h4>
+                            <p>Modified 3 days ago</p>
+                        </div>
+                        <div class="doc-agent">
+                            <span class="agent-tag gemini">Gemini</span>
+                        </div>
+                        <div class="doc-date">Feb 7, 2025</div>
+                        <div class="doc-status completed">Completed</div>
+                    </div>
+                    
+                    <div class="doc-card">
+                        <div class="doc-icon">💻</div>
+                        <div class="doc-info">
+                            <h4>Refactor Plan.md</h4>
+                            <p>Modified 4 days ago</p>
+                        </div>
+                        <div class="doc-agent">
+                            <span class="agent-tag cursor">Cursor</span>
+                        </div>
+                        <div class="doc-date">Feb 6, 2025</div>
+                        <div class="doc-status draft">Draft</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="documents.js"></script>
+</body>
+</html>

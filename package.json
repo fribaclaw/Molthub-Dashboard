@@ -1,12 +1,20 @@
 {
   "name": "molthub-dashboard",
-  "version": "0.1.0",
-  "description": "3D agent hub interface with character selection, world exploration, and agent configuration",
+  "version": "2.0.0",
+  "description": "3D agent hub interface with character selection, world exploration, and agent configuration. Built with Three.js, Express, and Socket.IO.",
   "main": "server/app.js",
   "scripts": {
     "start": "node server/app.js",
     "dev": "nodemon server/app.js"
   },
+  "keywords": [
+    "dashboard",
+    "3d",
+    "threejs",
+    "agents",
+    "socket.io",
+    "express"
+  ],
   "dependencies": {
     "express": "^4.21.2",
     "socket.io": "^4.8.1",

@@ -72,8 +72,62 @@ document.addEventListener('DOMContentLoaded', () => {
     initNavigation();
     initCharacterGrid();
     initPreviewPanel();
+    initSocket();
     animate();
 });
+
+// ===== SOCKET.IO =====
+let socket;
+
+function initSocket() {
+    socket = io();
+    
+    socket.on('connect', () => {
+        console.log('Connected to Molthub server');
+    });
+    
+    socket.on('init', (data) => {
+        console.log('Server says:', data.message);
+    });
+    
+    socket.on('agent-update', (data) => {
+        console.log('Agent update received:', data);
+    });
+    
+    socket.on('notification', (data) => {
+        console.log('Notification:', data);
+        showNotification(data.message, data.type || 'info');
+    });
+    
+    socket.on('disconnect', () => {
+        console.log('Disconnected from server');
+    });
+}
+
+function showNotification(message, type = 'info') {
+    const notification = document.createElement('div');
+    notification.className = `notification notification-${type}`;
+    notification.textContent = message;
+    notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 16px 24px;
+        background: ${type === 'success' ? '#00ff88' : type === 'error' ? '#ff3333' : '#0099ff'};
+        color: #0a0a0f;
+        font-weight: 600;
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+        z-index: 1000;
+        animation: slideIn 0.3s ease;
+    `;
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        notification.style.animation = 'slideOut 0.3s ease';
+        setTimeout(() => notification.remove(), 300);
+    }, 3000);
+}
 
 // ===== NAVIGATION =====
 function initNavigation() {
