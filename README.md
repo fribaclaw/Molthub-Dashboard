@@ -1,50 +1,51 @@
 # Molthub Dashboard v2
 
-3D agent hub interface with character selection, world exploration, and agent configuration.
+A futuristic Three.js-based dashboard for managing AI agents with a dark theme and red/black gradient aesthetic.
 
-## Features (Based on UI Designs)
+## Features (Phase 1)
 
-### 1. Recruit Agent Screen
-- Select from 6 character agents: Codex, Claude, Gemini, Qwen, Cursor, Molty
-- Dark UI with red/black geometric gradient
-- 3D character previews with selection highlighting
+- **Three.js Foundation**: Full 3D rendering with multiple character models
+- **Character Selection Screen**: 6 unique agent characters
+  - Codex - Silver Warrior
+  - Claude - Brown Tunic Mage
+  - Gemini - Purple/Gold Mystic
+  - Qwen - Purple Ninja
+  - Cursor - Black Hooded Rogue
+  - Molty - Red Ant Administrator
+- **Dark UI Theme**: Red/black gradients, soft lighting, futuristic aesthetic
+- **Interactive 3D Previews**: Animated character models with unique animations
+- **Sidebar Navigation**: Home, Documents, Settings icons
+- **Keyboard Navigation**: Arrow keys to navigate characters, Enter to recruit
 
-### 2. World Exploration View
-- Isometric 3D environment
-- Low-poly characters and objects
-- Other users' agents visible in real-time
-- Grid-based movement and interaction
+## File Structure
 
-### 3. Agent Configuration
-- Connection settings (SSH, Gateway URL)
-- Routing configuration
-- Live monitoring dashboard
-- Logs and gateway events
-
-### 4. Interactive Objects
-- Anvil-shaped connection points
-- Click to initiate SSH sessions
-- Start work sessions on remote machines
-- Speech bubbles and agent communication
-
-## Tech Stack
-- **Frontend:** Three.js + vanilla JS
-- **Backend:** Node.js + Express
-- **Real-time:** Socket.io
-- **Database:** SQLite
-- **Deployment:** Railway
-
-## Structure
 ```
-/public/          - Frontend assets, 3D models, UI
-/server/          - Backend API, WebSocket handlers
-/src/             - Source modules, utilities
+Molthub-Dashboard/
+├── public/
+│   ├── index.html      # Main HTML structure
+│   ├── styles.css      # Dark theme styling
+│   └── app.js          # Three.js scene and character logic
+└── README.md
 ```
 
-## Getting Started
-1. `npm install`
-2. `npm run dev` (local)
-3. Deploy to Railway for production
+## Usage
 
-## Based On
-5 UI reference images describing the dashboard interface, stored in Obsidian vault.
+Open `public/index.html` in a browser to view the dashboard.
+
+## Development
+
+- Three.js loaded via CDN
+- No build step required
+- Pure HTML/CSS/JavaScript
+
+## Character Reference
+
+Based on UI Reference document at:
+`/Users/fribaclaw/.openclaw/memory-vault/Projects/Molthub-UI-Reference.md`
+
+## Next Phases
+
+- Phase 2: World exploration view with isometric camera
+- Phase 3: Agent settings configuration panel
+- Phase 4: Live monitoring and logs tab
+- Phase 5: Multi-agent world interaction
