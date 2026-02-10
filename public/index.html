@@ -6,6 +6,8 @@
     <title>Molthub Dashboard v2</title>
     <link rel="stylesheet" href="styles.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="js/ws-client.js"></script>
 </head>
 <body>
     <!-- Sidebar Navigation -->
@@ -88,14 +90,133 @@
             </div>
         </section>
 
-        <!-- Settings Section (Placeholder) -->
+        <!-- Settings Section -->
         <section id="settings-section" class="content-section">
             <header class="section-header">
                 <h1 class="section-title">Settings</h1>
-                <p class="section-subtitle">Configure your dashboard</p>
+                <p class="section-subtitle">Configure agents and gateway connection</p>
             </header>
-            <div class="placeholder-content">
-                <p>Settings panel coming soon...</p>
+            
+            <div class="settings-layout">
+                <!-- Agent Selector -->
+                <div class="settings-sidebar">
+                    <h3>Select Agent</h3>
+                    <div class="settings-agent-list" id="settingsAgentList">
+                        <!-- Agents will be loaded here -->
+                    </div>
+                </div>
+                
+                <!-- Configuration Panels -->
+                <div class="settings-content">
+                    <!-- SSH Configuration Panel -->
+                    <div class="settings-panel" id="sshPanel">
+                        <h3>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M4 17l6-6-6-6M12 19l7-7-7-7"/>
+                            </svg>
+                            SSH Connection
+                        </h3>
+                        <form id="sshForm">
+                            <div class="form-group">
+                                <label for="sshHost">Host Address</label>
+                                <input type="text" id="sshHost" placeholder="192.168.1.100 or hostname">
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="sshPort">Port</label>
+                                    <input type="number" id="sshPort" value="22" min="1" max="65535">
+                                </div>
+                                <div class="form-group">
+                                    <label for="sshUsername">Username</label>
+                                    <input type="text" id="sshUsername" placeholder="root">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="sshKeyPath">SSH Key Path (optional)</label>
+                                <input type="text" id="sshKeyPath" placeholder="~/.ssh/id_rsa">
+                            </div>
+                            <div class="form-actions">
+                                <button type="submit" class="btn-primary">Save SSH Config</button>
+                                <button type="button" class="btn-secondary" id="testSSHBtn">Test Connection</button>
+                            </div>
+                        </form>
+                    </div>
+                    
+                    <!-- Gateway Configuration Panel -->
+                    <div class="settings-panel" id="gatewayPanel">
+                        <h3>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
+                                <line x1="8" y1="21" x2="16" y2="21"/>
+                                <line x1="12" y1="17" x2="12" y2="21"/>
+                            </svg>
+                            Gateway Connection
+                        </h3>
+                        <form id="gatewayForm">
+                            <div class="form-group">
+                                <label for="gatewayUrl">Gateway URL</label>
+                                <input type="url" id="gatewayUrl" placeholder="ws://localhost:8080">
+                            </div>
+                            <div class="form-group">
+                                <label for="gatewayToken">Gateway Token</label>
+                                <input type="password" id="gatewayToken" placeholder="Enter authentication token">
+                                <small>Token is stored securely and masked in responses</small>
+                            </div>
+                            <div class="form-group checkbox">
+                                <label>
+                                    <input type="checkbox" id="autoConnect">
+                                    <span>Auto-connect on startup</span>
+                                </label>
+                            </div>
+                            <div class="form-actions">
+                                <button type="submit" class="btn-primary">Save Gateway Config</button>
+                                <button type="button" class="btn-secondary" id="testGatewayBtn">Test Connection</button>
+                            </div>
+                        </form>
+                    </div>
+                    
+                    <!-- Gateway Logs Panel -->
+                    <div class="settings-panel" id="logsPanel">
+                        <h3>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                <polyline points="14 2 14 8 20 8"/>
+                                <line x1="16" y1="13" x2="8" y2="13"/>
+                                <line x1="16" y1="17" x2="8" y2="17"/>
+                            </svg>
+                            Gateway Logs
+                        </h3>
+                        <div class="logs-toolbar">
+                            <select id="logLevelFilter">
+                                <option value="">All Levels</option>
+                                <option value="error">Error</option>
+                                <option value="warn">Warning</option>
+                                <option value="info">Info</option>
+                                <option value="debug">Debug</option>
+                            </select>
+                            <button class="btn-icon" id="refreshLogsBtn" title="Refresh">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="23 4 23 10 17 10"/>
+                                    <polyline points="1 20 1 14 7 14"/>
+                                    <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
+                                </svg>
+                            </button>
+                            <button class="btn-icon" id="clearLogsBtn" title="Clear Old Logs">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="3 6 5 6 21 6"/>
+                                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                                </svg>
+                            </button>
+                            <label class="live-toggle">
+                                <input type="checkbox" id="liveLogs" checked>
+                                <span>Live</span>
+                            </label>
+                        </div>
+                        <div class="logs-container" id="logsContainer">
+                            <div class="logs-empty">No logs available. Start the gateway to see activity.</div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </section>
     </main>

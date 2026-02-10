@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings - Molthub Dashboard v2</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="settings.css">
+</head>
+<body>
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+        <div class="sidebar-logo">
+            <div class="logo-icon">M</div>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="index.html" class="nav-btn" title="Recruit Agent">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                    <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                </svg>
+            </a>
+            <a href="documents.html" class="nav-btn" title="Documents">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                    <line x1="16" y1="17" x2="8" y2="17"></line>
+                    <polyline points="10 9 9 9 8 9"></polyline>
+                </svg>
+            </a>
+            <a href="settings.html" class="nav-btn active" title="Settings">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="3"></circle>
+                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                </svg>
+            </a>
+        </nav>
+        <div class="sidebar-footer">
+            <div class="status-indicator" title="Gateway Status">
+                <div class="status-dot online"></div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+        <section id="settings-section" class="content-section active">
+            <header class="section-header">
+                <h1 class="section-title">
+                    <span class="highlight-text">Settings</span>
+                </h1>
+                <p class="section-subtitle">Configure your Molthub Dashboard</p>
+            </header>
+
+            <div class="settings-layout">
+                <!-- Settings Categories -->
+                <div class="settings-categories">
+                    <button class="category-btn active" data-category="general">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="3"></circle>
+                            <path d="M12 1v6m0 6v6m4.22-10.22l4.24-4.24M6.34 6.34L2.1 2.1m17.9 9.9h-6m-6 0H1.9m16.32-4.22l4.24 4.24M6.34 17.66l-4.24 4.24"></path>
+                        </svg>
+                        General
+                    </button>
+                    <button class="category-btn" data-category="appearance">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="5"></circle>
+                            <path d="M12 1v2m0 18v2m4.22-4.22l1.42-1.42M6.34 6.34L4.93 4.93m14.14 0l-1.41 1.41M6.34 17.66l-1.42 1.42"></path>
+                        </svg>
+                        Appearance
+                    </button>
+                    <button class="category-btn" data-category="notifications">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                            <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                        </svg>
+                        Notifications
+                    </button>
+                    <button class="category-btn" data-category="agents">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                        Agents
+                    </button>
+                    <button class="category-btn" data-category="about">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="12" y1="16" x2="12" y2="12"></line>
+                            <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                        </svg>
+                        About
+                    </button>
+                </div>
+
+                <!-- Settings Content -->
+                <div class="settings-content">
+                    <!-- General Settings -->
+                    <div class="settings-group active" id="general-settings">
+                        <h3>General Settings</h3>
+                        
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <label>Auto-save</label>
+                                <p>Automatically save settings changes</p>
+                            </div>
+                            <label class="toggle">
+                                <input type="checkbox" id="autosave" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <label>Sound Effects</label>
+                                <p>Enable UI sound effects</p>
+                            </div>
+                            <label class="toggle">
+                                <input type="checkbox" id="soundEffects" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <label>Auto Update</label>
+                                <p>Check for updates automatically</p>
+                            </div>
+                            <label class="toggle">
+                                <input type="checkbox" id="autoUpdate">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <label>Language</label>
+                                <p>Interface language</p>
+                            </div>
+                            <select id="language" class="setting-select">
+                                <option value="en">English</option>
+                                <option value="es">Español</option>
+                                <option value="fr">Français</option>
+                                <option value="de">Deutsch</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Appearance Settings -->
+                    <div class="settings-group" id="appearance-settings">
+                        <h3>Appearance</h3>
+                        
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <label>Theme</label>
+                                <p>Select your preferred theme</p>
+                            </div>
+                            <select id="theme" class="setting-select">
+                                <option value="dark" selected>Dark (Default)</option>
+                                <option value="light">Light</option>
+                                <option value="high-contrast">High Contrast</option>
+                            </select>
+                        </div>
+
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <label>Accent Color</label>
+                                <p>Primary accent color</p>
+                            </div>
+                            <div class="color-picker">
+                                <button class="color-option active" style="background: #ff3333" data-color="red"></button>
+                                <button class="color-option" style="background: #00ff88" data-color="green"></button>
+                                <button class="color-option" style="background: #00ccff" data-color="blue"></button>
+                                <button class="color-option" style="background: #9d4edd" data-color="purple"></button>
+                                <button class="color-option" style="background: #ffd700" data-color="gold"></button>
+                            </div>
+                        </div>
+
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <label>Animations</label>
+                                <p>Enable smooth transitions and animations</p>
+                            </div>
+                            <label class="toggle">
+                                <input type="checkbox" id="animations" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Notification Settings -->
+                    <div class="settings-group" id="notifications-settings">
+                        <h3>Notifications</h3>
+                        
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <label>Enable Notifications</label>
+                                <p>Receive system notifications</p>
+                            </div>
+                            <label class="toggle">
+                                <input type="checkbox" id="notifications" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <label>Agent Updates</label>
+                                <p>Notify when agents complete tasks</p>
+                            </div>
+                            <label class="toggle">
+                                <input type="checkbox" id="agentNotifications" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <label>System Alerts</label>
+                                <p>Important system messages</p>
+                            </div>
+                            <label class="toggle">
+                                <input type="checkbox" id="systemAlerts" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Agents Settings -->
+                    <div class="settings-group" id="agents-settings">
+                        <h3>Agent Preferences</h3>
+                        
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <label>Default Agent</label>
+                                <p>Agent used for general tasks</p>
+                            </div>
+                            <select id="defaultAgent" class="setting-select">
+                                <option value="molty">Molty (Hub Admin)</option>
+                                <option value="codex">Codex (Code Assistant)</option>
+                                <option value="claude">Claude (Creative)</option>
+                                <option value="gemini">Gemini (Dual Core)</option>
+                                <option value="qwen">Qwen (Ninja)</option>
+                                <option value="cursor">Cursor (Editor)</option>
+                            </select>
+                        </div>
+
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <label>Max Concurrent Agents</label>
+                                <p>Maximum number of agents running simultaneously</p>
+                            </div>
+                            <input type="range" id="maxAgents" min="1" max="6" value="3" class="setting-range">
+                            <span class="range-value">3</span>
+                        </div>
+
+                        <div class="danger-zone">
+                            <h4>Danger Zone</h4>
+                            <div class="danger-item">
+                                <div>
+                                    <label>Reset All Agent Data</label>
+                                    <p>Clear all agent configurations and history</p>
+                                </div>
+                                <button class="danger-btn" id="resetAgents">Reset</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- About Settings -->
+                    <div class="settings-group" id="about-settings">
+                        <h3>About Molthub Dashboard</h3>
+                        
+                        <div class="about-card">
+                            <div class="about-logo">
+                                <div class="logo-large">M</div>
+                            </div>
+                            <h2>Molthub Dashboard v2</h2>
+                            <p class="version">Version 2.0.0</p>
+                            <p class="description">
+                                A 3D agent hub interface featuring character selection, 
+                                world exploration, and agent configuration. Built with 
+                                Three.js, Express, and Socket.IO.
+                            </p>
+                        </div>
+
+                        <div class="about-stats">
+                            <div class="about-stat">
+                                <span class="stat-label">Characters</span>
+                                <span class="stat-value">6</span>
+                            </div>
+                            <div class="about-stat">
+                                <span class="stat-label">Worlds</span>
+                                <span class="stat-value">4</span>
+                            </div>
+                            <div class="about-stat">
+                                <span class="stat-label">Node.js</span>
+                                <span class="stat-value">20+</span>
+                            </div>
+                        </div>
+
+                        <div class="about-links">
+                            <a href="#" class="about-link">Documentation</a>
+                            <a href="#" class="about-link">GitHub</a>
+                            <a href="#" class="about-link">Support</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="settings.js"></script>
+</body>
+</html>

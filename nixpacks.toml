@@ -1,0 +1,18 @@
+# Nixpacks configuration for Molthub Dashboard
+# https://nixpacks.com/docs/configuration/file
+
+[phases.setup]
+nixPkgs = ["nodejs_20", "npm-9_x"]
+
+[phases.install]
+cmds = ["npm install"]
+
+[phases.build]
+cmds = ["echo 'No build step required for Express server with static files'"]
+
+[start]
+cmd = "npm start"
+
+[variables]
+NODE_ENV = "production"
+PORT = "3000"
