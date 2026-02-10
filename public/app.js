@@ -834,3 +834,633 @@ document.addEventListener('keydown', (e) => {
         selectCharacter(characters[newIndex].id);
     }
 });
+
+// ===== WEBSOCKET INTEGRATION =====
+let wsConnected = false;
+
+function initWebSocket() {
+    // Connect to WebSocket server
+    molthubWS.connect()
+        .on('connected', () => {
+            console.log('[App] WebSocket connected');
+            wsConnected = true;
+            updateConnectionStatus();
+        })
+        .on('authenticated', (data) => {
+            console.log('[App] Authenticated as:', data.username);
+            // Register agent when character is selected
+            if (selectedCharacter) {
+                molthubWS.registerAgent(selectedCharacter);
+            }
+        })
+        .on('agentRegistered', (data) => {
+            console.log('[App] Agent registered:', data);
+            showNotification(`Welcome, ${selectedCharacter.name}! Connected to Molthub.`);
+        })
+        .on('agentJoined', (data) => {
+            console.log('[App] Agent joined:', data.displayName);
+            showNotification(`${data.displayName} joined the hub!`);
+        })
+        .on('agentLeft', (data) => {
+            console.log('[App] Agent left:', data.displayName);
+        })
+        .on('agentMoved', (data) => {
+            // Would update 3D world positions
+            console.log('[App] Agent moved:', data.agentId, data.position);
+        })
+        .on('speechShown', (data) => {
+            console.log('[App] Speech bubble:', data.displayName, data.message);
+            showSpeechBubble(data.agentId, data.message, data.duration);
+        })
+        .on('agentWaved', (data) => {
+            console.log('[App] Agent waved:', data.displayName);
+            showNotification(`${data.displayName} waves at you!`);
+        })
+        .on('disconnected', (data) => {
+            console.log('[App] WebSocket disconnected:', data.reason);
+            wsConnected = false;
+            updateConnectionStatus();
+        })
+        .on('error', (error) => {
+            console.error('[App] WebSocket error:', error);
+        });
+}
+
+function updateConnectionStatus() {
+    const statusDot = document.querySelector('.status-dot');
+    if (statusDot) {
+        statusDot.className = wsConnected ? 'status-dot online' : 'status-dot offline';
+    }
+}
+
+function showNotification(message) {
+    // Create notification element
+    const notification = document.createElement('div');
+    notification.className = 'notification';
+    notification.textContent = message;
+    notification.style.cssText = `
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background: rgba(255, 51, 51, 0.9);
+        color: white;
+        padding: 12px 20px;
+        border-radius: 8px;
+        font-size: 14px;
+        z-index: 1000;
+        animation: slideIn 0.3s ease;
+    `;
+    
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        notification.style.animation = 'slideOut 0.3s ease';
+        setTimeout(() => notification.remove(), 300);
+    }, 3000);
+}
+
+function showSpeechBubble(agentId, message, duration) {
+    // Would render speech bubble in 3D world
+    console.log(`[Speech] Agent ${agentId}: ${message}`);
+}
+
+// Add recruitment button handler with WebSocket
+function handleRecruit() {
+    if (!selectedCharacter) return;
+    
+    if (wsConnected) {
+        // Register agent with WebSocket
+        molthubWS.registerAgent(selectedCharacter);
+        
+        // Show speech bubble
+        molthubWS.showSpeechBubble(`I am ${selectedCharacter.name}, ready to serve!`, 5000);
+    } else {
+        // Offline mode - just show alert
+        alert(`Recruited ${selectedCharacter.name}!`);
+    }
+}
+
+// Update recruit button handler
+document.addEventListener('DOMContentLoaded', () => {
+    const recruitBtn = document.getElementById('recruitBtn');
+    if (recruitBtn) {
+        recruitBtn.removeEventListener('click', null);
+        recruitBtn.addEventListener('click', handleRecruit);
+    }
+    
+    // Initialize WebSocket connection
+    initWebSocket();
+});
+
+// CSS animations for notifications
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes slideIn {
+        from { transform: translateX(400px); opacity: 0; }
+        to { transform: translateX(0); opacity: 1; }
+    }
+    @keyframes slideOut {
+        from { transform: translateX(0); opacity: 1; }
+        to { transform: translateX(400px); opacity: 0; }
+    }
+    .status-dot.offline {
+        background-color: #ff4444;
+    }
+`;
+document.head.appendChild(style);
+
+// ===== SETTINGS API INTEGRATION =====
+const API_BASE_URL = '';
+
+// Settings State
+let settingsState = {
+    agents: [],
+    selectedAgentId: null,
+    logs: [],
+    lastLogTimestamp: null,
+    liveLogsInterval: null
+};
+
+// API Client
+const api = {
+    async getAgents() {
+        const response = await fetch(`${API_BASE_URL}/api/agents`);
+        return response.json();
+    },
+    
+    async getAgentConfig(agentId) {
+        const response = await fetch(`${API_BASE_URL}/api/config/${agentId}`);
+        return response.json();
+    },
+    
+    async saveAgentConfig(agentId, config) {
+        const response = await fetch(`${API_BASE_URL}/api/config/${agentId}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(config)
+        });
+        return response.json();
+    },
+    
+    async getLogs(filters = {}) {
+        const params = new URLSearchParams(filters);
+        const response = await fetch(`${API_BASE_URL}/api/logs?${params}`);
+        return response.json();
+    },
+    
+    async getLiveLogs(limit = 50) {
+        const response = await fetch(`${API_BASE_URL}/api/logs/live?limit=${limit}`);
+        return response.json();
+    },
+    
+    async getLogsSince(timestamp) {
+        const response = await fetch(`${API_BASE_URL}/api/logs/live?since=${timestamp}`);
+        return response.json();
+    },
+    
+    async clearOldLogs(days = 7) {
+        const response = await fetch(`${API_BASE_URL}/api/logs?days=${days}`, {
+            method: 'DELETE'
+        });
+        return response.json();
+    }
+};
+
+// Initialize Settings Panel
+document.addEventListener('DOMContentLoaded', () => {
+    initSettings();
+});
+
+function initSettings() {
+    // Load agents into settings sidebar
+    loadSettingsAgents();
+    
+    // SSH Form Handler
+    const sshForm = document.getElementById('sshForm');
+    if (sshForm) {
+        sshForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            await saveSSHConfig();
+        });
+    }
+    
+    // Gateway Form Handler
+    const gatewayForm = document.getElementById('gatewayForm');
+    if (gatewayForm) {
+        gatewayForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            await saveGatewayConfig();
+        });
+    }
+    
+    // Test Connection Buttons
+    const testSSHBtn = document.getElementById('testSSHBtn');
+    if (testSSHBtn) {
+        testSSHBtn.addEventListener('click', testSSHConnection);
+    }
+    
+    const testGatewayBtn = document.getElementById('testGatewayBtn');
+    if (testGatewayBtn) {
+        testGatewayBtn.addEventListener('click', testGatewayConnection);
+    }
+    
+    // Logs Controls
+    const refreshLogsBtn = document.getElementById('refreshLogsBtn');
+    if (refreshLogsBtn) {
+        refreshLogsBtn.addEventListener('click', () => {
+            settingsState.lastLogTimestamp = null;
+            loadLogs();
+        });
+    }
+    
+    const clearLogsBtn = document.getElementById('clearLogsBtn');
+    if (clearLogsBtn) {
+        clearLogsBtn.addEventListener('click', clearOldLogs);
+    }
+    
+    const liveLogsToggle = document.getElementById('liveLogs');
+    if (liveLogsToggle) {
+        liveLogsToggle.addEventListener('change', (e) => {
+            if (e.target.checked) {
+                startLiveLogs();
+            } else {
+                stopLiveLogs();
+            }
+        });
+    }
+    
+    const logLevelFilter = document.getElementById('logLevelFilter');
+    if (logLevelFilter) {
+        logLevelFilter.addEventListener('change', () => {
+            settingsState.lastLogTimestamp = null;
+            loadLogs();
+        });
+    }
+    
+    // Start live logs if enabled
+    startLiveLogs();
+}
+
+async function loadSettingsAgents() {
+    try {
+        const response = await api.getAgents();
+        if (response.success) {
+            settingsState.agents = response.agents;
+            renderSettingsAgentList();
+            
+            // Select first agent by default
+            if (settingsState.agents.length > 0 && !settingsState.selectedAgentId) {
+                selectSettingsAgent(settingsState.agents[0].id);
+            }
+        }
+    } catch (error) {
+        console.error('Failed to load agents:', error);
+    }
+}
+
+function renderSettingsAgentList() {
+    const container = document.getElementById('settingsAgentList');
+    if (!container) return;
+    
+    container.innerHTML = settingsState.agents.map(agent => `
+        <div class="settings-agent-item ${agent.id === settingsState.selectedAgentId ? 'selected' : ''}" 
+             data-agent-id="${agent.id}">
+            <div class="agent-status ${agent.status}"></div>
+            <span class="agent-name">${agent.name}</span>
+        </div>
+    `).join('');
+    
+    // Add click handlers
+    container.querySelectorAll('.settings-agent-item').forEach(item => {
+        item.addEventListener('click', () => {
+            selectSettingsAgent(item.dataset.agentId);
+        });
+    });
+}
+
+async function selectSettingsAgent(agentId) {
+    settingsState.selectedAgentId = agentId;
+    
+    // Update UI selection
+    document.querySelectorAll('.settings-agent-item').forEach(item => {
+        item.classList.toggle('selected', item.dataset.agentId === agentId);
+    });
+    
+    // Load agent config
+    try {
+        const response = await api.getAgentConfig(agentId);
+        if (response.success && response.config) {
+            populateConfigForm(response.config);
+        } else {
+            clearConfigForm();
+        }
+    } catch (error) {
+        console.error('Failed to load agent config:', error);
+        clearConfigForm();
+    }
+}
+
+function populateConfigForm(config) {
+    // SSH fields
+    const sshHost = document.getElementById('sshHost');
+    const sshPort = document.getElementById('sshPort');
+    const sshUsername = document.getElementById('sshUsername');
+    const sshKeyPath = document.getElementById('sshKeyPath');
+    
+    if (sshHost) sshHost.value = config.ssh_host || '';
+    if (sshPort) sshPort.value = config.ssh_port || 22;
+    if (sshUsername) sshUsername.value = config.ssh_username || '';
+    if (sshKeyPath) sshKeyPath.value = config.ssh_key_path || '';
+    
+    // Gateway fields
+    const gatewayUrl = document.getElementById('gatewayUrl');
+    const gatewayToken = document.getElementById('gatewayToken');
+    const autoConnect = document.getElementById('autoConnect');
+    
+    if (gatewayUrl) gatewayUrl.value = config.gateway_url || '';
+    if (gatewayToken) gatewayToken.value = '';
+    if (autoConnect) autoConnect.checked = config.auto_connect === 1;
+}
+
+function clearConfigForm() {
+    const fields = ['sshHost', 'sshUsername', 'sshKeyPath', 'gatewayUrl', 'gatewayToken'];
+    fields.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = '';
+    });
+    
+    const sshPort = document.getElementById('sshPort');
+    if (sshPort) sshPort.value = 22;
+    
+    const autoConnect = document.getElementById('autoConnect');
+    if (autoConnect) autoConnect.checked = false;
+}
+
+async function saveSSHConfig() {
+    const agentId = settingsState.selectedAgentId;
+    if (!agentId) {
+        alert('Please select an agent first');
+        return;
+    }
+    
+    const config = {
+        ssh_host: document.getElementById('sshHost')?.value || null,
+        ssh_port: parseInt(document.getElementById('sshPort')?.value) || 22,
+        ssh_username: document.getElementById('sshUsername')?.value || null,
+        ssh_key_path: document.getElementById('sshKeyPath')?.value || null
+    };
+    
+    try {
+        const response = await api.saveAgentConfig(agentId, config);
+        if (response.success) {
+            showNotification('SSH configuration saved successfully', 'success');
+        } else {
+            showNotification(response.error || 'Failed to save SSH config', 'error');
+        }
+    } catch (error) {
+        console.error('Failed to save SSH config:', error);
+        showNotification('Failed to save SSH configuration', 'error');
+    }
+}
+
+async function saveGatewayConfig() {
+    const agentId = settingsState.selectedAgentId;
+    if (!agentId) {
+        alert('Please select an agent first');
+        return;
+    }
+    
+    const tokenValue = document.getElementById('gatewayToken')?.value;
+    const config = {
+        gateway_url: document.getElementById('gatewayUrl')?.value || null,
+        auto_connect: document.getElementById('autoConnect')?.checked || false
+    };
+    
+    // Only include token if it was entered (not empty)
+    if (tokenValue && tokenValue.trim()) {
+        config.gateway_token = tokenValue;
+    }
+    
+    try {
+        const response = await api.saveAgentConfig(agentId, config);
+        if (response.success) {
+            showNotification('Gateway configuration saved successfully', 'success');
+            // Clear token field after save
+            const tokenField = document.getElementById('gatewayToken');
+            if (tokenField) tokenField.value = '';
+        } else {
+            showNotification(response.error || 'Failed to save gateway config', 'error');
+        }
+    } catch (error) {
+        console.error('Failed to save gateway config:', error);
+        showNotification('Failed to save gateway configuration', 'error');
+    }
+}
+
+async function testSSHConnection() {
+    const host = document.getElementById('sshHost')?.value;
+    if (!host) {
+        showNotification('Please enter an SSH host to test', 'warning');
+        return;
+    }
+    
+    showNotification('Testing SSH connection... (feature coming soon)', 'info');
+}
+
+async function testGatewayConnection() {
+    const url = document.getElementById('gatewayUrl')?.value;
+    if (!url) {
+        showNotification('Please enter a gateway URL to test', 'warning');
+        return;
+    }
+    
+    try {
+        const ws = new WebSocket(url);
+        
+        ws.onopen = () => {
+            showNotification('Gateway connection successful!', 'success');
+            ws.close();
+        };
+        
+        ws.onerror = () => {
+            showNotification('Gateway connection failed', 'error');
+        };
+        
+        ws.onclose = (e) => {
+            if (!e.wasClean) {
+                showNotification('Gateway connection closed unexpectedly', 'warning');
+            }
+        };
+        
+        // Timeout after 5 seconds
+        setTimeout(() => {
+            if (ws.readyState === WebSocket.CONNECTING) {
+                ws.close();
+                showNotification('Gateway connection timeout', 'error');
+            }
+        }, 5000);
+    } catch (error) {
+        showNotification('Invalid gateway URL', 'error');
+    }
+}
+
+// Logs Management
+async function loadLogs() {
+    try {
+        const level = document.getElementById('logLevelFilter')?.value || '';
+        const agentId = settingsState.selectedAgentId;
+        
+        const filters = { limit: 100 };
+        if (level) filters.level = level;
+        if (agentId) filters.agentId = agentId;
+        
+        const response = await api.getLogs(filters);
+        if (response.success) {
+            settingsState.logs = response.logs;
+            if (response.logs.length > 0) {
+                settingsState.lastLogTimestamp = response.logs[0].timestamp;
+            }
+            renderLogs();
+        }
+    } catch (error) {
+        console.error('Failed to load logs:', error);
+    }
+}
+
+async function pollNewLogs() {
+    if (!settingsState.lastLogTimestamp) {
+        await loadLogs();
+        return;
+    }
+    
+    try {
+        const response = await api.getLogsSince(settingsState.lastLogTimestamp);
+        if (response.success && response.logs.length > 0) {
+            // Prepend new logs
+            settingsState.logs = [...response.logs, ...settingsState.logs].slice(0, 200);
+            settingsState.lastLogTimestamp = response.logs[response.logs.length - 1].timestamp;
+            renderLogs();
+        }
+    } catch (error) {
+        console.error('Failed to poll logs:', error);
+    }
+}
+
+function renderLogs() {
+    const container = document.getElementById('logsContainer');
+    if (!container) return;
+    
+    if (settingsState.logs.length === 0) {
+        container.innerHTML = '<div class="logs-empty">No logs available. Start the gateway to see activity.</div>';
+        return;
+    }
+    
+    const levelColors = {
+        error: '#ff4444',
+        warn: '#ffaa00',
+        info: '#00aaff',
+        debug: '#888888'
+    };
+    
+    container.innerHTML = settingsState.logs.map(log => {
+        const date = new Date(log.timestamp * 1000);
+        const timeStr = date.toLocaleTimeString();
+        const agentName = log.agent_name || log.agent_id || 'system';
+        
+        return `
+            <div class="log-entry ${log.level}">
+                <span class="log-time">${timeStr}</span>
+                <span class="log-level" style="color: ${levelColors[log.level] || '#fff'}">${log.level.toUpperCase()}</span>
+                <span class="log-agent">${agentName}</span>
+                <span class="log-message">${escapeHtml(log.message)}</span>
+            </div>
+        `;
+    }).join('');
+    
+    // Auto-scroll to bottom if live logs enabled
+    const liveToggle = document.getElementById('liveLogs');
+    if (liveToggle?.checked) {
+        container.scrollTop = container.scrollHeight;
+    }
+}
+
+function startLiveLogs() {
+    if (settingsState.liveLogsInterval) return;
+    
+    // Initial load
+    loadLogs();
+    
+    // Poll every 3 seconds
+    settingsState.liveLogsInterval = setInterval(pollNewLogs, 3000);
+}
+
+function stopLiveLogs() {
+    if (settingsState.liveLogsInterval) {
+        clearInterval(settingsState.liveLogsInterval);
+        settingsState.liveLogsInterval = null;
+    }
+}
+
+async function clearOldLogs() {
+    if (!confirm('Are you sure you want to clear logs older than 7 days?')) {
+        return;
+    }
+    
+    try {
+        const response = await api.clearOldLogs(7);
+        if (response.success) {
+            showNotification(`Cleared ${response.deletedCount} old log entries`, 'success');
+            loadLogs();
+        }
+    } catch (error) {
+        console.error('Failed to clear logs:', error);
+        showNotification('Failed to clear old logs', 'error');
+    }
+}
+
+// Utilities
+function showNotification(message, type = 'info') {
+    // Create notification element
+    const notification = document.createElement('div');
+    notification.className = `notification ${type}`;
+    notification.textContent = message;
+    
+    // Add to page
+    let container = document.getElementById('notificationContainer');
+    if (!container) {
+        container = document.createElement('div');
+        container.id = 'notificationContainer';
+        document.body.appendChild(container);
+    }
+    
+    container.appendChild(notification);
+    
+    // Animate in
+    requestAnimationFrame(() => {
+        notification.classList.add('show');
+    });
+    
+    // Remove after 3 seconds
+    setTimeout(() => {
+        notification.classList.remove('show');
+        setTimeout(() => notification.remove(), 300);
+    }, 3000);
+}
+
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+// Stop live logs when leaving settings section
+document.addEventListener('click', (e) => {
+    const settingsSection = document.getElementById('settings-section');
+    const isSettingsActive = settingsSection?.classList.contains('active');
+    
+    if (!isSettingsActive && settingsState.liveLogsInterval) {
+        stopLiveLogs();
+    } else if (isSettingsActive && document.getElementById('liveLogs')?.checked && !settingsState.liveLogsInterval) {
+        startLiveLogs();
+    }
+});
