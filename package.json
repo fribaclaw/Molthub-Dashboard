@@ -1,0 +1,22 @@
+{
+  "name": "molthub-dashboard",
+  "version": "0.1.0",
+  "description": "3D agent hub interface with character selection, world exploration, and agent configuration",
+  "main": "server/app.js",
+  "scripts": {
+    "start": "node server/app.js",
+    "dev": "nodemon server/app.js"
+  },
+  "dependencies": {
+    "express": "^4.21.2",
+    "socket.io": "^4.8.1",
+    "better-sqlite3": "^12.6.2",
+    "cors": "^2.8.5"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.9"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}
